@@ -1,7 +1,7 @@
 # Deploying Switchyard
 
 A single host is enough: one service process (ingest + API) and one worker process
-(retries). The queue is the SQLite file, so there is no broker to operate — and no
+(retries). The queue is the SQLite file, so there is no broker to operate, and no
 second worker.
 
 ## Layout

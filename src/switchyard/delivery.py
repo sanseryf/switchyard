@@ -2,9 +2,9 @@
 
 A delivery fails in two very different ways, and the dead letter records which:
 
-* **validation** — Assay rejected the payload. Retrying cannot help, so it is dead on
+* **validation**: Assay rejected the payload. Retrying cannot help, so it is dead on
   the first attempt and the grouped report is attached. This is the M8 contract.
-* **delivery / assay-error** — the destination or Assay was unreachable or returned an
+* **delivery / assay-error**: the destination or Assay was unreachable or returned an
   error. The delivery is retried, then dead-lettered with the last error.
 """
 

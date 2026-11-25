@@ -3,7 +3,7 @@
 ![CI](https://github.com/sanseryf/switchyard/actions/workflows/ci.yml/badge.svg)
 
 > **A webhook router that explains its failures.** Signed ingest, deduplication,
-> routing, retries with backoff — and a dead-letter queue where every entry carries
+> routing, retries with backoff, and a dead-letter queue where every entry carries
 > the grouped validation report that stopped it.
 
 **Status: v0.1.0.** Milestones M1–M3 are built: signed GitHub ingest, routing,
@@ -34,7 +34,7 @@ Switchyard makes three promises:
 2. **Nothing is lost.** Every accepted event and every delivery attempt is in SQLite;
    exhausted retries become dead letters, not silence.
 3. **Every dead letter explains itself.** When Assay rejects a payload, its grouped
-   report — root causes, paths, hints, samples — is stored with the dead letter and
+   report (root causes, paths, hints, samples) is stored with the dead letter and
    returned by the API and the CLI.
 
 ## Quick start
@@ -46,7 +46,7 @@ validation demo; everything else runs without it.
 uv sync --extra dev
 ```
 
-Terminal 1 — Assay's API (from the Assay checkout):
+Terminal 1, Assay's API (from the Assay checkout):
 
 ```bash
 cd ../assay
@@ -54,14 +54,14 @@ uv sync --extra api
 uv run assay serve --port 8000
 ```
 
-Terminal 2 — a destination that prints what it receives:
+Terminal 2, a destination that prints what it receives:
 
 ```bash
 cd switchyard
 uv run python examples/receiver.py
 ```
 
-Terminal 3 — Switchyard:
+Terminal 3, Switchyard:
 
 ```bash
 # PowerShell: $env:GITHUB_WEBHOOK_SECRET = "dev-secret"
@@ -69,7 +69,7 @@ export GITHUB_WEBHOOK_SECRET=dev-secret
 uv run switchyard serve --config examples/routes.yaml --port 8080
 ```
 
-Terminal 4 — send a signed webhook:
+Terminal 4, send a signed webhook:
 
 ```bash
 # PowerShell: $env:GITHUB_WEBHOOK_SECRET = "dev-secret"
@@ -148,7 +148,7 @@ is dead after `retries + 1` attempts. Every attempt and error is persisted.
 Before delivering, Switchyard posts `{payload, schema}` to Assay. A report with errors
 (or warnings, when `fail_on: warning`) dead-letters the payload with `reason:
 validation`, the report attached and no delivery attempt. If Assay is unreachable the
-delivery is *retried*, then dead-lettered with `reason: assay-error` — a broken validator
+delivery is *retried*, then dead-lettered with `reason: assay-error`. A broken validator
 must not silently drop traffic.
 
 ### Dead letters and replay
