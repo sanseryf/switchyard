@@ -1,0 +1,3 @@
+# LF everywhere: the demo payloads and route files are examples that must behave
+# identically on Linux, macOS and Windows.
+* text=auto eol=lf
