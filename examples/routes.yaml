@@ -1,0 +1,24 @@
+# A demo route file. The `member` route validates with Assay before delivering; a
+# payload that fails validation becomes a dead letter with the grouped report attached.
+database: state/switchyard.db
+secret_env: GITHUB_WEBHOOK_SECRET
+
+routes:
+  - id: pushes-to-sink
+    event: push
+    destination: http://127.0.0.1:9100/hook
+    transform:
+      repository: payload.repository.full_name
+      event: event
+      delivery: delivery
+    retries: 3
+
+  - id: members-to-sink
+    event: member
+    destination: http://127.0.0.1:9100/hook
+    retries: 2
+    assay:
+      url: http://127.0.0.1:8000/assay
+      schema_path: member.schema.json
+      fail_on: error
+      timeout_seconds: 10
