@@ -161,6 +161,22 @@ uv run switchyard replay 1 --config examples/routes.yaml   # queue and attempt a
 `POST /dlq/{id}/replay` does the same over HTTP. Replay reuses the stored body and
 destination; the payload is re-validated before it ships.
 
+## Deploying
+
+[`deploy/`](deploy/README.md) has systemd units for the service and the single worker,
+an env template, and a Dockerfile. The short version: one process serves, one worker
+retries, both share one SQLite file, `/dlq` and `/events` stay private while
+`/webhooks/github` is public behind TLS.
+
+```bash
+docker build -t switchyard .
+docker run --rm -p 127.0.0.1:8080:8080 \
+  -v "$PWD/examples/routes.yaml:/config/routes.yaml" \
+  -v "$PWD/examples/state:/state" \
+  -e GITHUB_WEBHOOK_SECRET=... \
+  switchyard serve --config /config/routes.yaml --host 0.0.0.0
+```
+
 ## Design decisions
 
 | Decision | Why |

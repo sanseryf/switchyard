@@ -45,3 +45,14 @@ jobs:
           --cov=switchyard
           --cov-report=term-missing
           --cov-fail-under=85
+
+  docker:
+    name: docker image
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the image
+        run: docker build -t switchyard:ci .
+      - name: Smoke-test the entry point
+        run: docker run --rm switchyard:ci --version

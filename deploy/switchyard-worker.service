@@ -1,0 +1,20 @@
+[Unit]
+Description=Switchyard delivery worker (retries and DLQ)
+Documentation=https://github.com/sanseryf/switchyard
+After=switchyard.service
+Wants=switchyard.service
+
+[Service]
+Type=simple
+User=switchyard
+Group=switchyard
+WorkingDirectory=/opt/switchyard
+EnvironmentFile=/etc/switchyard/switchyard.env
+ExecStart=/opt/switchyard/.venv/bin/switchyard worker --config /etc/switchyard/routes.yaml
+Restart=on-failure
+RestartSec=3
+
+# One worker only: the SQLite queue is not safe for two dispatchers. If you need
+# more throughput, move the queue to a real broker before scaling out.
+[Install]
+WantedBy=multi-user.target
