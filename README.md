@@ -1,5 +1,7 @@
 # Switchyard
 
+![CI](https://github.com/sanseryf/switchyard/actions/workflows/ci.yml/badge.svg)
+
 > **A webhook router that explains its failures.** Signed ingest, deduplication,
 > routing, retries with backoff — and a dead-letter queue where every entry carries
 > the grouped validation report that stopped it.
