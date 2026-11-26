@@ -33,10 +33,10 @@ Point the route file's `database:` at `/var/lib/switchyard/switchyard.db`.
 
 ## Reverse proxy
 
-Keep `/webhooks/*` public but `/dlq` and `/events` private. With Nginx Proxy Manager
-(the reference stack) that is two proxy hosts or one host plus an access list; with
-Tailscale, bind Switchyard to the tailnet interface and expose the webhook path through
-the tunnel only.
+Keep `/webhooks/*` public but the dashboard (`/`), `/ui`, `/dlq` and `/events` private.
+With Nginx Proxy Manager (the reference stack) that is two proxy hosts or one host plus
+an access list; with Tailscale, bind Switchyard to the tailnet interface and expose the
+webhook path through the tunnel only.
 
 GitHub must reach `https://<host>/webhooks/github` over TLS, with content type
 `application/json` and the same secret as `GITHUB_WEBHOOK_SECRET`.

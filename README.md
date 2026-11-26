@@ -6,10 +6,13 @@
 > routing, retries with backoff, and a dead-letter queue where every entry carries
 > the grouped validation report that stopped it.
 
-**Status: v0.1.0.** Milestones M1–M3 are built: signed GitHub ingest, routing,
+**Status: v0.2.0.** Milestones M1–M3 are built: signed GitHub ingest, routing,
 reliable delivery and the DLQ. The Assay validation stage (M8 in the Assay
 architecture) is wired through the HTTP API: a payload Assay rejects is dead-lettered
-with its report attached, so the queue answers *why* instead of *what*.
+with its report attached, so the queue answers *why* instead of *what*. The dashboard
+is served by the same process.
+
+![Switchyard dashboard](docs/ui.png)
 
 ```text
 GitHub ──POST + HMAC──▶  ingest ──▶ events + deliveries (SQLite) ──▶ dispatcher
@@ -99,6 +102,22 @@ Now send the good payload (new delivery id) and watch the receiver print it:
 uv run python examples/send_webhook.py --event member --delivery d-002 \
   --payload examples/good-member.json
 ```
+
+## Dashboard
+
+`switchyard serve` also serves a dashboard at <http://127.0.0.1:8080>:
+
+- totals for events, delivered, pending and dead-lettered deliveries
+- the loaded routes, with a marker for routes that validate with Assay
+- recent events and their per-route status
+- deliveries with a status filter and the last error
+- the dead-letter queue. Clicking a row shows the stored Assay report (path, message,
+  hint, samples), the delivery body and the original payload, with a Replay button.
+
+It refreshes every five seconds, pauses while a dead letter is open, and reads only from
+the local database. Keep it on a private network: it shows payload bodies and delivery
+history. The dashboard uses `/ui/stats`, `/ui/events`, `/ui/deliveries`, `/ui/routes` and
+the existing `/dlq` endpoints.
 
 ## How it works
 
@@ -225,7 +244,9 @@ src/switchyard/
   routing.py     matching and transform resolution
   validator.py   Assay HTTP client and the pass/fail rule
   delivery.py    dispatcher: validate, POST, backoff, dead-letter
-  api.py         webhook ingest, events, DLQ list/detail/replay
+  api.py         webhook ingest, dashboard routes, DLQ list/detail/replay
+  templates/     the dashboard HTML shell
+  static/        dashboard CSS and JS
   cli.py         serve, worker, dlq, replay, routes
 examples/        demo routes, schema, payloads, receiver and webhook sender
 tests/           security, config, routing, store, delivery, API, CLI
