@@ -54,6 +54,8 @@ def test_dashboard_shell(ui) -> None:
     assert "Switchyard" in page
     assert 'id="stat-events"' in page
     assert 'id="dlq-body"' in page
+    assert 'id="theme-toggle"' in page
+    assert 'name="theme-color"' in page
     assert "/static/app.js" in page
 
 
@@ -65,6 +67,9 @@ def test_static_assets(ui) -> None:
     script = client.get("/static/app.js")
     assert script.status_code == 200
     assert "/ui/stats" in script.text
+    font = client.get("/static/fonts/inter-latin.woff2")
+    assert font.status_code == 200
+    assert font.content[:4] == b"wOF2"
 
 
 def test_stats_endpoint(ui) -> None:

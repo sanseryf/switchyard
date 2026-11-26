@@ -30,7 +30,7 @@ def write_config(tmp_path: Path) -> Path:
 def test_version() -> None:
     result = runner.invoke(app, ["--version"])
     assert result.exit_code == 0
-    assert "switchyard 0.2.0" in result.output
+    assert "switchyard 0.3.0" in result.output
 
 
 def test_routes_are_listed(tmp_path: Path) -> None:
