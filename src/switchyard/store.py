@@ -222,6 +222,56 @@ class Store:
         self._connection.commit()
         return int(cursor.lastrowid or 0)
 
+    # ------------------------------------------------------------------ dashboard
+
+    def stats(self) -> dict[str, Any]:
+        """Counts for the dashboard, in one round trip each."""
+        events = self._connection.execute("SELECT COUNT(*) AS n FROM events").fetchone()["n"]
+        delivery_rows = self._connection.execute(
+            "SELECT status, COUNT(*) AS n FROM deliveries GROUP BY status"
+        ).fetchall()
+        deliveries = {"pending": 0, "delivered": 0, "dead": 0}
+        for row in delivery_rows:
+            deliveries[str(row["status"])] = int(row["n"])
+        dead = self._connection.execute("SELECT COUNT(*) AS n FROM dead_letters").fetchone()["n"]
+        oldest = self._connection.execute(
+            "SELECT MIN(next_attempt_at) AS at FROM deliveries WHERE status = 'pending'"
+        ).fetchone()["at"]
+        return {
+            "events": int(events),
+            "deliveries": deliveries,
+            "dead_letters": int(dead),
+            "oldest_pending_at": oldest,
+        }
+
+    def recent_events(self, limit: int = 25) -> list[dict[str, Any]]:
+        rows = self._connection.execute(
+            "SELECT e.id, e.delivery, e.event, e.received_at, "
+            "COUNT(d.id) AS routes, "
+            "SUM(CASE WHEN d.status = 'delivered' THEN 1 ELSE 0 END) AS delivered, "
+            "SUM(CASE WHEN d.status = 'pending' THEN 1 ELSE 0 END) AS pending, "
+            "SUM(CASE WHEN d.status = 'dead' THEN 1 ELSE 0 END) AS dead "
+            "FROM events e LEFT JOIN deliveries d ON d.event_id = e.id "
+            "GROUP BY e.id ORDER BY e.id DESC LIMIT ?",
+            (limit,),
+        ).fetchall()
+        return [dict(row) for row in rows]
+
+    def recent_deliveries(self, limit: int = 25, status: str | None = None) -> list[dict[str, Any]]:
+        query = (
+            "SELECT d.id, d.event_id, d.route_id, d.destination, d.status, d.attempts, "
+            "d.next_attempt_at, d.last_error, e.event, e.delivery "
+            "FROM deliveries d JOIN events e ON e.id = d.event_id"
+        )
+        parameters: list[Any] = []
+        if status:
+            query += " WHERE d.status = ?"
+            parameters.append(status)
+        query += " ORDER BY d.id DESC LIMIT ?"
+        parameters.append(limit)
+        rows = self._connection.execute(query, parameters).fetchall()
+        return [dict(row) for row in rows]
+
 
 def _with_report(row: sqlite3.Row) -> dict[str, Any]:
     item = dict(row)

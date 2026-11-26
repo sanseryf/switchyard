@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Switchyard</title>
+<meta name="description" content="Webhook routing, delivery and dead letters.">
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<header class="masthead">
+  <div class="brand">
+    <span class="mark" aria-hidden="true">S</span>
+    <div>
+      <h1>Switchyard</h1>
+      <p>Webhook routing and delivery</p>
+    </div>
+  </div>
+  <div class="masthead-meta">
+    <span class="live" id="live">live</span>
+    <span class="version">v{{ version }}</span>
+    <span class="routes-count">{{ routes }} routes</span>
+    <label class="toggle">
+      <input type="checkbox" id="auto" checked>
+      <span>Auto refresh</span>
+    </label>
+    <a href="/docs">API</a>
+  </div>
+</header>
+
+<main class="shell">
+  <div class="banner" id="banner" role="status" aria-live="polite" hidden></div>
+
+  <section class="stats" id="stats" aria-label="Totals">
+    <div class="stat"><span>Events</span><strong id="stat-events">0</strong></div>
+    <div class="stat ok"><span>Delivered</span><strong id="stat-delivered">0</strong></div>
+    <div class="stat wait"><span>Pending</span><strong id="stat-pending">0</strong></div>
+    <div class="stat bad"><span>Dead letters</span><strong id="stat-dead">0</strong></div>
+  </section>
+
+  <div class="columns">
+    <section class="panel" aria-labelledby="routes-heading">
+      <div class="panel-head">
+        <h2 id="routes-heading">Routes</h2>
+        <span class="subtle">from the route file</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Id</th><th>Event</th><th>Destination</th><th>Assay</th></tr></thead>
+          <tbody id="routes-body"><tr><td colspan="4" class="empty">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="events-heading">
+      <div class="panel-head">
+        <h2 id="events-heading">Recent events</h2>
+        <span class="subtle">newest first</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Event</th><th>Delivery</th><th>Age</th><th>Routes</th><th>Status</th></tr></thead>
+          <tbody id="events-body"><tr><td colspan="6" class="empty">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <section class="panel" aria-labelledby="deliveries-heading">
+    <div class="panel-head">
+      <h2 id="deliveries-heading">Deliveries</h2>
+      <label class="filter">
+        <span>Status</span>
+        <select id="delivery-status">
+          <option value="">all</option>
+          <option value="pending">pending</option>
+          <option value="delivered">delivered</option>
+          <option value="dead">dead</option>
+        </select>
+      </label>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Event</th><th>Route</th><th>Status</th><th>Attempts</th><th>Last error</th></tr></thead>
+        <tbody id="deliveries-body"><tr><td colspan="6" class="empty">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="dlq-heading">
+    <div class="panel-head">
+      <h2 id="dlq-heading">Dead letters</h2>
+      <span class="subtle">click a row for the report</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Reason</th><th>Route</th><th>Event</th><th>When</th><th>Assay report</th></tr></thead>
+        <tbody id="dlq-body"><tr><td colspan="6" class="empty">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<aside class="drawer" id="drawer" aria-label="Dead letter detail" hidden>
+  <div class="drawer-head">
+    <h2 id="drawer-title">Dead letter</h2>
+    <button type="button" class="close" id="drawer-close" aria-label="Close">Close</button>
+  </div>
+  <div class="drawer-body" id="drawer-body"></div>
+  <div class="drawer-actions">
+    <button type="button" class="primary" id="replay">Replay</button>
+    <span class="subtle" id="drawer-status"></span>
+  </div>
+</aside>
+
+<footer class="footer">
+  <span>Keep this UI on a private network. It shows payload bodies and delivery history.</span>
+  <a href="https://github.com/sanseryf/switchyard">Source</a>
+</footer>
+
+<script src="/static/app.js" defer></script>
+</body>
+</html>
