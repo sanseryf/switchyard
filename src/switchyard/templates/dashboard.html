@@ -5,17 +5,39 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Switchyard</title>
 <meta name="description" content="Webhook routing, delivery and dead letters.">
+<meta name="theme-color" content="#030705" id="theme-color">
+<script>
+(function () {
+  var theme = "night";
+  try {
+    var forced = new URLSearchParams(window.location.search).get("theme");
+    if (forced === "day" || forced === "night") {
+      theme = forced;
+    } else {
+      var saved = localStorage.getItem("switchyard.theme");
+      if (saved === "day" || saved === "night") theme = saved;
+    }
+  } catch (error) {}
+  document.documentElement.dataset.theme = theme;
+  try {
+    if (new URLSearchParams(window.location.search).has("still")) {
+      document.documentElement.dataset.still = "1";
+    }
+  } catch (error) {}
+})();
+</script>
 <link rel="stylesheet" href="/static/app.css">
 </head>
 <body>
+<div class="atmosphere" aria-hidden="true"><span class="aurora"></span><span class="stars"></span></div>
 <header class="masthead">
-  <div class="brand">
-    <span class="mark" aria-hidden="true">S</span>
-    <div>
-      <h1>Switchyard</h1>
-      <p>Webhook routing and delivery</p>
-    </div>
-  </div>
+  <a class="brand" href="/" aria-label="Switchyard dashboard">
+    <span class="monogram" aria-hidden="true">S</span>
+    <span class="brand-text">
+      <span class="eyebrow">Switchyard · Webhook routing</span>
+      <span class="wordmark">Switchyard</span>
+    </span>
+  </a>
   <div class="masthead-meta">
     <span class="live" id="live">live</span>
     <span class="version">v{{ version }}</span>
@@ -25,6 +47,10 @@
       <span>Auto refresh</span>
     </label>
     <a href="/docs">API</a>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to day theme" aria-pressed="false">
+      <svg class="icon sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      <svg class="icon moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5a8.5 8.5 0 1 0 10.7 10.7Z"/></svg>
+    </button>
   </div>
 </header>
 
@@ -41,7 +67,10 @@
   <div class="columns">
     <section class="panel" aria-labelledby="routes-heading">
       <div class="panel-head">
-        <h2 id="routes-heading">Routes</h2>
+        <div>
+          <p class="panel-eyebrow">Configured</p>
+          <h2 id="routes-heading">Routes</h2>
+        </div>
         <span class="subtle">from the route file</span>
       </div>
       <div class="table-wrap">
@@ -54,7 +83,10 @@
 
     <section class="panel" aria-labelledby="events-heading">
       <div class="panel-head">
-        <h2 id="events-heading">Recent events</h2>
+        <div>
+          <p class="panel-eyebrow">Ingest</p>
+          <h2 id="events-heading">Recent events</h2>
+        </div>
         <span class="subtle">newest first</span>
       </div>
       <div class="table-wrap">
@@ -68,7 +100,10 @@
 
   <section class="panel" aria-labelledby="deliveries-heading">
     <div class="panel-head">
-      <h2 id="deliveries-heading">Deliveries</h2>
+      <div>
+        <p class="panel-eyebrow">Queue</p>
+        <h2 id="deliveries-heading">Deliveries</h2>
+      </div>
       <label class="filter">
         <span>Status</span>
         <select id="delivery-status">
@@ -89,7 +124,10 @@
 
   <section class="panel" aria-labelledby="dlq-heading">
     <div class="panel-head">
-      <h2 id="dlq-heading">Dead letters</h2>
+      <div>
+        <p class="panel-eyebrow">Exceptions</p>
+        <h2 id="dlq-heading">Dead letters</h2>
+      </div>
       <span class="subtle">click a row for the report</span>
     </div>
     <div class="table-wrap">

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "switchyard"
-version = "0.2.0"
+version = "0.3.0"
 description = "Webhook router: signed ingest, dedupe, routing, reliable delivery and a self-explaining DLQ"
 readme = "README.md"
 requires-python = ">=3.11"

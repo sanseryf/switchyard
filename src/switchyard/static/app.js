@@ -16,7 +16,9 @@ const ui = {
   drawerBody: document.getElementById("drawer-body"),
   drawerStatus: document.getElementById("drawer-status"),
   drawerClose: document.getElementById("drawer-close"),
-  replay: document.getElementById("replay")
+  replay: document.getElementById("replay"),
+  themeToggle: document.getElementById("theme-toggle"),
+  themeColor: document.getElementById("theme-color")
 };
 
 let currentDeadLetter = null;
@@ -46,6 +48,33 @@ function relative(epoch) {
   if (seconds < 86400) return Math.round(seconds / 3600) + "h ago";
   return Math.round(seconds / 86400) + "d ago";
 }
+
+function applyTheme(theme) {
+  document.documentElement.dataset.theme = theme;
+  try {
+    localStorage.setItem("switchyard.theme", theme);
+  } catch (error) {}
+  const day = theme === "day";
+  if (ui.themeColor) ui.themeColor.content = day ? "#D8CDB7" : "#030705";
+  if (ui.themeToggle) {
+    ui.themeToggle.setAttribute("aria-pressed", day ? "true" : "false");
+    ui.themeToggle.setAttribute(
+      "aria-label",
+      day ? "Switch to night theme" : "Switch to day theme"
+    );
+  }
+}
+
+function wireTheme() {
+  if (!ui.themeToggle) return;
+  ui.themeToggle.addEventListener("click", () => {
+    const next = document.documentElement.dataset.theme === "day" ? "night" : "day";
+    applyTheme(next);
+  });
+  applyTheme(document.documentElement.dataset.theme === "day" ? "day" : "night");
+}
+
+wireTheme();
 
 function plural(count, singular) {
   return count + " " + singular + (count === 1 ? "" : "s");
