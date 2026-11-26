@@ -4,6 +4,25 @@ All notable changes to Switchyard are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [0.3.0] - 2026-11-26
+
+### Changed
+
+- **New visual system.** The dashboard now matches the rest of the tooling: near-black
+  forest night and warm parchment day, bronze as the only functional accent, a green
+  aurora atmosphere, and serif display type.
+- Masthead rebuilt with a monogram, an eyebrow label and a sun/moon toggle. The choice is
+  applied before paint by an inline script, persisted in `localStorage`, and reflected in
+  `<meta name="theme-color">`.
+- Stats, panels, tables, pills, the filter and the dead-letter drawer restyled. Panels and
+  stats rise in with a short stagger; `prefers-reduced-motion` disables it.
+
+### Added
+
+- Self-hosted variable fonts: Fraunces, Inter and JetBrains Mono, with their SIL Open
+  Font License files, in `static/fonts`. No external asset or CDN.
+- A `?theme=day` preview parameter and a `?still=1` capture mode that disables motion.
+
 ## [0.2.0] - 2026-11-26
 
 ### Added

@@ -6,13 +6,15 @@
 > routing, retries with backoff, and a dead-letter queue where every entry carries
 > the grouped validation report that stopped it.
 
-**Status: v0.2.0.** Milestones M1–M3 are built: signed GitHub ingest, routing,
+**Status: v0.3.0.** Milestones M1–M3 are built: signed GitHub ingest, routing,
 reliable delivery and the DLQ. The Assay validation stage (M8 in the Assay
 architecture) is wired through the HTTP API: a payload Assay rejects is dead-lettered
 with its report attached, so the queue answers *why* instead of *what*. The dashboard
 is served by the same process.
 
-![Switchyard dashboard](docs/ui.png)
+![Switchyard dashboard at night](docs/ui.png)
+
+The masthead toggle switches to a warm parchment day scheme and remembers the choice.
 
 ```text
 GitHub ──POST + HMAC──▶  ingest ──▶ events + deliveries (SQLite) ──▶ dispatcher
@@ -118,6 +120,10 @@ It refreshes every five seconds, pauses while a dead letter is open, and reads o
 the local database. Keep it on a private network: it shows payload bodies and delivery
 history. The dashboard uses `/ui/stats`, `/ui/events`, `/ui/deliveries`, `/ui/routes` and
 the existing `/dlq` endpoints.
+
+The interface has two schemes: near-black forest night and warm parchment day, toggled in
+the masthead and remembered in `localStorage`. Type is self-hosted: Fraunces for display,
+Inter for UI and JetBrains Mono for paths and values. No external assets, no CDN.
 
 ## How it works
 
@@ -246,7 +252,7 @@ src/switchyard/
   delivery.py    dispatcher: validate, POST, backoff, dead-letter
   api.py         webhook ingest, dashboard routes, DLQ list/detail/replay
   templates/     the dashboard HTML shell
-  static/        dashboard CSS and JS
+  static/        dashboard CSS, JS and self-hosted fonts
   cli.py         serve, worker, dlq, replay, routes
 examples/        demo routes, schema, payloads, receiver and webhook sender
 tests/           security, config, routing, store, delivery, API, CLI
